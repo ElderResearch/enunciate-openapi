@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
@@ -50,7 +49,7 @@ import com.webcohesion.enunciate.javac.javadoc.JavaDoc;
 import com.webcohesion.enunciate.metadata.DocumentationExample;
 
 import dk.jyskebank.tools.enunciate.modules.openapi.yaml.IndentationPrinter;
-import dk.jyskebank.tools.enunciate.modules.openapi.yaml.JsonToYamlHelper;
+import dk.jyskebank.tools.enunciate.modules.openapi.yaml.YamlHelper;
 
 public class ObjectTypeRenderer {
     public static final String JSON_REF_FORMAT = "- $ref: \"#/components/schemas/%s\"";
@@ -428,10 +427,7 @@ public class ObjectTypeRenderer {
         optExample.ifPresent(example -> {
             ip.add("example:");
             ip.pushNextLevel();
-            String yaml = JsonToYamlHelper.jsonToYaml(example);
-            Stream.of(yaml.split("\n"))
-                    .skip(1) // ----- header
-                    .forEach(ip::add);
+            ip.add(YamlHelper.safeYamlString(example));
             ip.popLevel();
         });
     }
